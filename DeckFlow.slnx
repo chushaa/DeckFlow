@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="DeckFlow/DeckFlow.csproj" />
+  <Project Path="DeckFlow.Core/DeckFlow.Core.csproj" />
+  <Project Path="DeckFlow.Data/DeckFlow.Data.csproj" />
+  <Project Path="DeckFlow.Tests/DeckFlow.Tests.csproj" />
+</Solution>

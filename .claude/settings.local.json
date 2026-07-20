@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(dotnet new:*)",
+      "Bash(cmd.exe:*)",
+      "Bash(dotnet build:*)"
+    ]
+  }
+}

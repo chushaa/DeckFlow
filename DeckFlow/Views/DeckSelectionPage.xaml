@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:vm="clr-namespace:DeckFlow.ViewModels"
+			 xmlns:controls="clr-namespace:DeckFlow.Controls"
+			 x:Class="DeckFlow.Views.DeckSelectionPage"
+			 x:DataType="vm:DeckSelectionViewModel"
+			 Title="Select Decks">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Home"
+					 IconImageSource="home_icon"
+					 Clicked="OnHomeClicked" />
+	</ContentPage.ToolbarItems>
+
+	<Grid RowDefinitions="*,Auto" Padding="16">
+
+		<!-- Main content area -->
+		<Grid x:Name="ContentGrid" Grid.Row="0" ColumnDefinitions="*" RowDefinitions="Auto,*,Auto,*">
+
+			<!-- Available decks header -->
+			<Label Grid.Row="0"
+				   Text="Available Decks"
+				   Style="{StaticResource SectionHeader}"
+				   Margin="0,0,0,8"
+				   SemanticProperties.HeadingLevel="Level2" />
+
+			<!-- Available decks list -->
+			<CollectionView Grid.Row="1"
+							ItemsSource="{Binding AllDecks}"
+							SelectionMode="None">
+				<CollectionView.ItemTemplate>
+					<DataTemplate x:DataType="vm:DeckItemViewModel">
+						<controls:DeckCard Margin="0,0,0,8">
+							<controls:DeckCard.GestureRecognizers>
+								<TapGestureRecognizer
+									Command="{Binding Source={RelativeSource AncestorType={x:Type vm:DeckSelectionViewModel}}, Path=ToggleSelectCommand}"
+									CommandParameter="{Binding}" />
+							</controls:DeckCard.GestureRecognizers>
+						</controls:DeckCard>
+					</DataTemplate>
+				</CollectionView.ItemTemplate>
+				<CollectionView.EmptyView>
+					<Label Text="No decks imported yet. Go back and import a deck first."
+						   Style="{StaticResource SubHeadline}"
+						   HorizontalTextAlignment="Center"
+						   Margin="0,32" />
+				</CollectionView.EmptyView>
+			</CollectionView>
+
+			<!-- Play order header -->
+			<Label Grid.Row="2"
+				   Text="Play Order"
+				   Style="{StaticResource SectionHeader}"
+				   Margin="0,16,0,8"
+				   IsVisible="{Binding HasSelection}"
+				   SemanticProperties.HeadingLevel="Level2" />
+
+			<!-- Selected decks in order -->
+			<CollectionView Grid.Row="3"
+							ItemsSource="{Binding SelectedDecksInOrder}"
+							SelectionMode="None"
+							IsVisible="{Binding HasSelection}">
+				<CollectionView.ItemTemplate>
+					<DataTemplate x:DataType="vm:DeckItemViewModel">
+						<Grid ColumnDefinitions="*,Auto,Auto" Margin="0,0,0,8" ColumnSpacing="4">
+							<controls:DeckCard Grid.Column="0" />
+
+							<!-- Move up button -->
+							<Button Grid.Column="1"
+									Text="&#x25B2;"
+									FontSize="14"
+									Padding="8,4"
+									MinimumWidthRequest="48"
+									MinimumHeightRequest="48"
+									BackgroundColor="Transparent"
+									TextColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}"
+									Command="{Binding Source={RelativeSource AncestorType={x:Type vm:DeckSelectionViewModel}}, Path=MoveUpCommand}"
+									CommandParameter="{Binding}"
+									SemanticProperties.Description="Move up in play order" />
+
+							<!-- Move down button -->
+							<Button Grid.Column="2"
+									Text="&#x25BC;"
+									FontSize="14"
+									Padding="8,4"
+									MinimumWidthRequest="48"
+									MinimumHeightRequest="48"
+									BackgroundColor="Transparent"
+									TextColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}"
+									Command="{Binding Source={RelativeSource AncestorType={x:Type vm:DeckSelectionViewModel}}, Path=MoveDownCommand}"
+									CommandParameter="{Binding}"
+									SemanticProperties.Description="Move down in play order" />
+						</Grid>
+					</DataTemplate>
+				</CollectionView.ItemTemplate>
+			</CollectionView>
+
+		</Grid>
+
+		<!-- Bottom bar -->
+		<Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,8,0,0">
+
+			<Button Grid.Column="0"
+					Text="Back"
+					Style="{StaticResource SecondaryButtonStyle}"
+					Command="{Binding GoBackCommand}"
+					HorizontalOptions="Fill" />
+
+			<Button Grid.Column="1"
+					Text="Confirm"
+					Style="{StaticResource PrimaryButtonStyle}"
+					Command="{Binding ConfirmCommand}"
+					IsEnabled="{Binding CanConfirm}"
+					HorizontalOptions="Fill"
+					SemanticProperties.Hint="Generate movement plan for selected decks" />
+
+		</Grid>
+
+		<!-- Status overlay -->
+		<Grid Grid.Row="0" Grid.RowSpan="2"
+			  IsVisible="{Binding IsGenerating}"
+			  InputTransparent="False">
+			<BoxView Color="{AppThemeBinding Light=#80FFFFFF, Dark=#80000000}" />
+			<VerticalStackLayout VerticalOptions="Center"
+								 HorizontalOptions="Center"
+								 Spacing="12">
+				<ActivityIndicator IsRunning="{Binding IsGenerating}" />
+				<Label Text="{Binding StatusMessage}"
+					   HorizontalTextAlignment="Center" />
+			</VerticalStackLayout>
+		</Grid>
+
+		<!-- Error message -->
+		<Label Grid.Row="0"
+			   Text="{Binding StatusMessage}"
+			   Style="{StaticResource MissingCardStyle}"
+			   HorizontalTextAlignment="Center"
+			   VerticalOptions="End"
+			   Margin="0,0,0,8"
+			   IsVisible="{Binding IsError}" />
+
+	</Grid>
+
+</ContentPage>

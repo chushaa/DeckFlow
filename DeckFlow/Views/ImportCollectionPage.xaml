@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:vm="clr-namespace:DeckFlow.ViewModels"
+			 x:Class="DeckFlow.Views.ImportCollectionPage"
+			 x:DataType="vm:ImportCollectionViewModel"
+			 Title="Import Collection">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Home"
+					 IconImageSource="home_icon"
+					 Clicked="OnHomeClicked" />
+	</ContentPage.ToolbarItems>
+
+	<ScrollView>
+		<VerticalStackLayout Padding="24" Spacing="20" MaximumWidthRequest="500">
+
+			<Label Text="Import ManaBox Collection"
+				   Style="{StaticResource Headline}"
+				   SemanticProperties.HeadingLevel="Level1" />
+
+			<Label Text="Select a CSV file exported from ManaBox to import your card collection."
+				   Style="{StaticResource SubHeadline}" />
+
+			<!-- File picker -->
+			<Button Text="Select CSV File"
+					Style="{StaticResource SecondaryButtonStyle}"
+					Command="{Binding PickFileCommand}"
+					HorizontalOptions="Fill"
+					SemanticProperties.Hint="Opens file picker to select a ManaBox CSV export" />
+
+			<!-- Selected file name -->
+			<Label Text="{Binding FileName}"
+				   IsVisible="{Binding FileName, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+				   FontFamily="InterBold"
+				   HorizontalTextAlignment="Center" />
+
+			<!-- Preview card -->
+			<Border Style="{StaticResource CardStyle}"
+					IsVisible="{Binding HasPreview}">
+				<VerticalStackLayout Spacing="8">
+					<Label Text="Preview" Style="{StaticResource SectionHeader}" />
+					<HorizontalStackLayout Spacing="16">
+						<VerticalStackLayout>
+							<Label Text="{Binding PreviewCardCount}"
+								   FontFamily="InterBold"
+								   FontSize="24"
+								   HorizontalTextAlignment="Center" />
+							<Label Text="Cards"
+								   Style="{StaticResource SubHeadline}"
+								   FontSize="12" />
+						</VerticalStackLayout>
+						<VerticalStackLayout>
+							<Label Text="{Binding PreviewLocationCount}"
+								   FontFamily="InterBold"
+								   FontSize="24"
+								   HorizontalTextAlignment="Center" />
+							<Label Text="Locations"
+								   Style="{StaticResource SubHeadline}"
+								   FontSize="12" />
+						</VerticalStackLayout>
+					</HorizontalStackLayout>
+				</VerticalStackLayout>
+			</Border>
+
+			<!-- Import button -->
+			<Button Text="Import"
+					Style="{StaticResource PrimaryButtonStyle}"
+					Command="{Binding ImportCommand}"
+					IsVisible="{Binding HasPreview}"
+					IsEnabled="{Binding IsImporting, Converter={StaticResource InvertedBoolConverter}}"
+					HorizontalOptions="Fill" />
+
+			<!-- Import progress -->
+			<VerticalStackLayout Spacing="8"
+								 IsVisible="{Binding IsImporting}">
+				<Label HorizontalTextAlignment="Center"
+					   FontFamily="InterBold">
+					<Label.Text>
+						<MultiBinding StringFormat="{}{0} / {1} unique entries">
+							<Binding Path="ImportedEntryCount" />
+							<Binding Path="TotalEntryCount" />
+						</MultiBinding>
+					</Label.Text>
+				</Label>
+				<ProgressBar Progress="{Binding ImportProgress}"
+							 ProgressColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}"
+							 HeightRequest="8" />
+			</VerticalStackLayout>
+
+			<!-- Status message -->
+			<Label Text="{Binding StatusMessage}"
+				   IsVisible="{Binding StatusMessage, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+				   HorizontalTextAlignment="Center">
+				<Label.Triggers>
+					<DataTrigger TargetType="Label"
+								 Binding="{Binding IsError}"
+								 Value="True">
+						<Setter Property="Style" Value="{StaticResource MissingCardStyle}" />
+					</DataTrigger>
+				</Label.Triggers>
+			</Label>
+
+			</VerticalStackLayout>
+	</ScrollView>
+
+</ContentPage>

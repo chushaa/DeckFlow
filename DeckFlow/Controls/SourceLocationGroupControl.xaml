@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:contracts="clr-namespace:DeckFlow.Core.Planning.Contracts;assembly=DeckFlow.Core"
+			 xmlns:controls="clr-namespace:DeckFlow.Controls"
+			 x:Class="DeckFlow.Controls.SourceLocationGroupControl"
+			 x:DataType="contracts:SourceLocationGroup">
+
+	<Border Style="{StaticResource CardStyle}"
+			Padding="0"
+			Margin="0,0,0,8">
+		<VerticalStackLayout>
+
+			<!-- Location header with card count -->
+			<Grid ColumnDefinitions="*,Auto"
+				  Padding="16,12"
+				  BackgroundColor="{AppThemeBinding Light={StaticResource BadgeBackgroundLight}, Dark={StaticResource BadgeBackgroundDark}}">
+				<Label Grid.Column="0"
+					   Text="{Binding LocationName}"
+					   Style="{StaticResource LocationHeaderStyle}"
+					   Padding="0"
+					   VerticalOptions="Center" />
+				<Border Grid.Column="1"
+						Style="{StaticResource BadgeStyle}"
+						Padding="8,2"
+						VerticalOptions="Center">
+					<Label Text="{Binding MoveLines.Count, StringFormat='{0} cards'}"
+						   Style="{StaticResource BadgeTextStyle}" />
+				</Border>
+			</Grid>
+
+			<!-- Move lines -->
+			<VerticalStackLayout BindableLayout.ItemsSource="{Binding MoveLines}"
+								 Padding="8,4,8,8">
+				<BindableLayout.ItemTemplate>
+					<DataTemplate x:DataType="contracts:MoveLine">
+						<controls:MoveLineControl Margin="0,2" />
+					</DataTemplate>
+				</BindableLayout.ItemTemplate>
+			</VerticalStackLayout>
+
+		</VerticalStackLayout>
+	</Border>
+
+</ContentView>

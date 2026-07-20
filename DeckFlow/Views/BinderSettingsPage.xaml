@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:vm="clr-namespace:DeckFlow.ViewModels"
+			 x:Class="DeckFlow.Views.BinderSettingsPage"
+			 x:DataType="vm:BinderSettingsViewModel"
+			 Title="Binder Settings">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Home"
+					 IconImageSource="home_icon"
+					 Clicked="OnHomeClicked" />
+	</ContentPage.ToolbarItems>
+
+	<ScrollView Padding="24">
+		<VerticalStackLayout Spacing="20" MaximumWidthRequest="500">
+
+			<!-- Binder name -->
+			<Label Text="{Binding BinderName}"
+				   Style="{StaticResource Headline}"
+				   SemanticProperties.HeadingLevel="Level1" />
+
+			<!-- Color section -->
+			<Label Text="Color"
+				   Style="{StaticResource SubHeadline}"
+				   SemanticProperties.HeadingLevel="Level2" />
+
+			<!-- Color preview -->
+			<BoxView HeightRequest="48"
+					 CornerRadius="8"
+					 Color="{Binding SelectedColor, Converter={StaticResource StringToColorConverter}}"
+					 HorizontalOptions="Fill" />
+
+			<!-- Color palette -->
+			<FlexLayout Wrap="Wrap"
+						JustifyContent="Start"
+						AlignItems="Center">
+				<BindableLayout.ItemsSource>
+					<x:Array Type="{x:Type x:String}">
+						<x:String>#2D8A96</x:String>
+						<x:String>#388296</x:String>
+						<x:String>#DC2626</x:String>
+						<x:String>#F59E0B</x:String>
+						<x:String>#10B981</x:String>
+						<x:String>#3B82F6</x:String>
+						<x:String>#8B5CF6</x:String>
+						<x:String>#EC4899</x:String>
+						<x:String>#6B7280</x:String>
+						<x:String>#1F2937</x:String>
+						<x:String>#D97706</x:String>
+						<x:String>#059669</x:String>
+					</x:Array>
+				</BindableLayout.ItemsSource>
+				<BindableLayout.ItemTemplate>
+					<DataTemplate x:DataType="x:String">
+						<Border StrokeThickness="2"
+								Stroke="Transparent"
+								StrokeShape="RoundRectangle 20"
+								Margin="4"
+								WidthRequest="40"
+								HeightRequest="40"
+								MinimumWidthRequest="40"
+								MinimumHeightRequest="40">
+							<Border.GestureRecognizers>
+								<TapGestureRecognizer
+									Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BinderSettingsViewModel}}, Path=SelectColorCommand}"
+									CommandParameter="{Binding}" />
+							</Border.GestureRecognizers>
+							<BoxView CornerRadius="18"
+									 Color="{Binding Converter={StaticResource StringToColorConverter}}"
+									 WidthRequest="36"
+									 HeightRequest="36" />
+						</Border>
+					</DataTemplate>
+				</BindableLayout.ItemTemplate>
+			</FlexLayout>
+
+			<!-- Divider -->
+			<BoxView HeightRequest="1"
+					 Color="{AppThemeBinding Light={StaticResource OutlineLight}, Dark={StaticResource OutlineDark}}" />
+
+			<!-- Assignment rules section -->
+			<Label Text="Deck Assignment Rules"
+				   Style="{StaticResource SubHeadline}"
+				   SemanticProperties.HeadingLevel="Level2" />
+
+			<!-- Available for deck assignment -->
+			<Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="4">
+				<Label Text="Available for deck assignment"
+					   FontFamily="InterBold"
+					   FontSize="14"
+					   VerticalOptions="Center" />
+				<Switch Grid.Column="1"
+						IsToggled="{Binding AvailableForDeckAssignment}"
+						SemanticProperties.Description="Toggle availability for deck assignment" />
+				<Label Grid.Row="1"
+					   Grid.ColumnSpan="2"
+					   Text="When off, this binder won't appear in the location picker during deck import"
+					   Style="{StaticResource SubHeadline}"
+					   FontSize="12"
+					   Opacity="0.6" />
+			</Grid>
+
+			<!-- Allow multiple decks -->
+			<Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="4">
+				<Label Text="Allow multiple decks"
+					   FontFamily="InterBold"
+					   FontSize="14"
+					   VerticalOptions="Center" />
+				<Switch Grid.Column="1"
+						IsToggled="{Binding AllowMultipleDecks}"
+						SemanticProperties.Description="Toggle allowing multiple decks to use this binder" />
+				<Label Grid.Row="1"
+					   Grid.ColumnSpan="2"
+					   Text="When off, only one deck can be assigned to this binder at a time"
+					   Style="{StaticResource SubHeadline}"
+					   FontSize="12"
+					   Opacity="0.6" />
+			</Grid>
+
+			<!-- Divider -->
+			<BoxView HeightRequest="1"
+					 Color="{AppThemeBinding Light={StaticResource OutlineLight}, Dark={StaticResource OutlineDark}}" />
+
+			<!-- Save + Status -->
+			<Button Text="Save"
+					Style="{StaticResource PrimaryButtonStyle}"
+					Command="{Binding SaveCommand}"
+					HorizontalOptions="Fill"
+					SemanticProperties.Description="Save binder settings" />
+
+			<Label Text="{Binding StatusMessage}"
+				   IsVisible="{Binding StatusMessage, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+				   Style="{StaticResource SubHeadline}"
+				   FontSize="12"
+				   HorizontalTextAlignment="Center" />
+
+			<Button Text="Back"
+					Style="{StaticResource SecondaryButtonStyle}"
+					Command="{Binding GoBackCommand}"
+					HorizontalOptions="Fill" />
+
+		</VerticalStackLayout>
+	</ScrollView>
+
+</ContentPage>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:vm="clr-namespace:DeckFlow.ViewModels"
+			 xmlns:contracts="clr-namespace:DeckFlow.Core.Planning.Contracts;assembly=DeckFlow.Core"
+			 xmlns:controls="clr-namespace:DeckFlow.Controls"
+			 x:Class="DeckFlow.Views.StepViewerPage"
+			 x:DataType="vm:StepViewerViewModel"
+			 Title="Movement Plan">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Home"
+					 IconImageSource="home_icon"
+					 Clicked="OnHomeClicked" />
+	</ContentPage.ToolbarItems>
+
+	<Grid RowDefinitions="Auto,*,Auto" Padding="16">
+
+		<!-- Top: Step progress indicator -->
+		<VerticalStackLayout Grid.Row="0" Spacing="8" Margin="0,0,0,12">
+			<Label Text="{Binding StepProgressText}"
+				   Style="{StaticResource SubHeadline}"
+				   HorizontalTextAlignment="Center" />
+			<ProgressBar Progress="{Binding StepProgress}"
+						 HeightRequest="6"
+						 SemanticProperties.Description="{Binding StepProgressText}" />
+			<Label Text="{Binding CurrentStep.Title}"
+				   Style="{StaticResource Headline}"
+				   FontSize="22"
+				   HorizontalTextAlignment="Center" />
+			<Label Text="{Binding CurrentStep.Subtitle}"
+				   Style="{StaticResource SubHeadline}"
+				   HorizontalTextAlignment="Center" />
+		</VerticalStackLayout>
+
+		<!-- Middle: Instruction content -->
+		<ScrollView Grid.Row="1">
+			<VerticalStackLayout Spacing="4"
+								 BindableLayout.ItemsSource="{Binding CurrentStep.DeckInstructionSets}">
+				<BindableLayout.ItemTemplate>
+					<DataTemplate x:DataType="contracts:DeckInstructionSet">
+						<VerticalStackLayout Spacing="4" Margin="0,0,0,12">
+
+							<!-- Deck header -->
+							<Label Text="{Binding DeckName}"
+								   Style="{StaticResource SectionHeader}"
+								   Margin="0,4,0,8"
+								   SemanticProperties.HeadingLevel="Level2" />
+
+							<!-- Source location groups -->
+							<VerticalStackLayout BindableLayout.ItemsSource="{Binding SourceGroups}">
+								<BindableLayout.ItemTemplate>
+									<DataTemplate x:DataType="contracts:SourceLocationGroup">
+										<controls:SourceLocationGroupControl />
+									</DataTemplate>
+								</BindableLayout.ItemTemplate>
+							</VerticalStackLayout>
+
+							<!-- Missing cards section -->
+							<ContentView IsVisible="{Binding MissingCards, Converter={StaticResource IsNotNullConverter}}">
+								<controls:MissingCardsSectionControl BindingContext="{Binding MissingCards}" />
+							</ContentView>
+
+							<!-- Summary -->
+							<HorizontalStackLayout Margin="4,4,0,0">
+								<Label Text="{Binding Summary.TotalCardQuantity, StringFormat='{0} cards'}"
+									   TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}"
+									   FontSize="12" />
+								<Label Text="{Binding Summary.MissingCardCount, StringFormat=' ({0} missing)'}"
+									   TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}"
+									   FontSize="12"
+									   IsVisible="{Binding MissingCards, Converter={StaticResource IsNotNullConverter}}" />
+							</HorizontalStackLayout>
+
+						</VerticalStackLayout>
+					</DataTemplate>
+				</BindableLayout.ItemTemplate>
+			</VerticalStackLayout>
+		</ScrollView>
+
+		<!-- Bottom: Navigation buttons -->
+		<Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,12,0,0">
+			<Button Grid.Column="0"
+					Text="Previous"
+					Style="{StaticResource SecondaryButtonStyle}"
+					Command="{Binding PreviousStepCommand}"
+					IsEnabled="{Binding IsFirstStep, Converter={StaticResource InvertedBoolConverter}}"
+					HorizontalOptions="Fill"
+					SemanticProperties.Description="Go to previous step" />
+
+			<!-- Next button (visible when not last step) -->
+			<Button Grid.Column="1"
+					Text="Next"
+					Style="{StaticResource PrimaryButtonStyle}"
+					Command="{Binding NextStepCommand}"
+					IsVisible="{Binding IsLastStep, Converter={StaticResource InvertedBoolConverter}}"
+					HorizontalOptions="Fill"
+					SemanticProperties.Description="Go to next step" />
+
+			<!-- Done button (visible on last step) -->
+			<Button Grid.Column="1"
+					Text="Done"
+					Style="{StaticResource PrimaryButtonStyle}"
+					Command="{Binding DoneCommand}"
+					IsVisible="{Binding IsLastStep}"
+					HorizontalOptions="Fill"
+					SemanticProperties.Description="Finish and return to main screen" />
+		</Grid>
+
+		<!-- Loading overlay for step navigation -->
+		<Grid Grid.Row="0" Grid.RowSpan="3"
+			  IsVisible="{Binding IsNavigating}"
+			  InputTransparent="False">
+			<BoxView Color="{AppThemeBinding Light=#80FFFFFF, Dark=#80000000}" />
+			<VerticalStackLayout VerticalOptions="Center"
+								 HorizontalOptions="Center"
+								 Spacing="12">
+				<ActivityIndicator IsRunning="{Binding IsNavigating}" />
+				<Label Text="{Binding NavigatingText}"
+					   HorizontalTextAlignment="Center"
+					   FontFamily="InterBold" />
+			</VerticalStackLayout>
+		</Grid>
+
+	</Grid>
+
+</ContentPage>

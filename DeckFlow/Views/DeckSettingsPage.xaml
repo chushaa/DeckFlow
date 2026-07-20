@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:vm="clr-namespace:DeckFlow.ViewModels"
+			 x:Class="DeckFlow.Views.DeckSettingsPage"
+			 x:DataType="vm:DeckSettingsViewModel"
+			 Title="Deck Settings">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Home"
+					 IconImageSource="home_icon"
+					 Clicked="OnHomeClicked" />
+	</ContentPage.ToolbarItems>
+
+	<ScrollView>
+		<VerticalStackLayout Padding="24" Spacing="20" MaximumWidthRequest="500">
+
+			<!-- Deck header -->
+			<VerticalStackLayout Spacing="4">
+				<Label Text="{Binding DeckName}"
+					   Style="{StaticResource Headline}"
+					   SemanticProperties.HeadingLevel="Level1" />
+				<Border Style="{StaticResource BadgeStyle}" HorizontalOptions="Start">
+					<Label Text="{Binding CardCount, StringFormat='{0} cards'}"
+						   Style="{StaticResource BadgeTextStyle}" />
+				</Border>
+			</VerticalStackLayout>
+
+			<!-- Edit Name -->
+			<Border Style="{StaticResource CardStyle}" IsVisible="{Binding IsLoaded}">
+				<VerticalStackLayout Spacing="8" Padding="16">
+					<Label Text="Edit Name" Style="{StaticResource SectionHeader}" />
+					<Entry Text="{Binding EditedName}"
+						   Placeholder="Deck name"
+						   SemanticProperties.Description="Edit deck name" />
+					<Button Text="Save Name"
+							Style="{StaticResource PrimaryButtonStyle}"
+							Command="{Binding SaveNameCommand}"
+							IsEnabled="{Binding CanSaveName}"
+							HorizontalOptions="Fill" />
+				</VerticalStackLayout>
+			</Border>
+
+			<!-- Change Location -->
+			<Border Style="{StaticResource CardStyle}" IsVisible="{Binding IsLoaded}">
+				<VerticalStackLayout Spacing="8" Padding="16">
+					<Label Text="Storage Location" Style="{StaticResource SectionHeader}" />
+					<Picker ItemsSource="{Binding Locations}"
+							SelectedItem="{Binding SelectedLocation}"
+							Title="Select location"
+							SemanticProperties.Description="Change deck storage location" />
+					<Button Text="Save Location"
+							Style="{StaticResource PrimaryButtonStyle}"
+							Command="{Binding SaveLocationCommand}"
+							HorizontalOptions="Fill" />
+				</VerticalStackLayout>
+			</Border>
+
+			<!-- Replace Cards -->
+			<Border Style="{StaticResource CardStyle}" IsVisible="{Binding IsLoaded}">
+				<VerticalStackLayout Spacing="8" Padding="16">
+					<Label Text="Replace Cards" Style="{StaticResource SectionHeader}" />
+					<Label Text="Replace all cards in this deck with a new deck list file."
+						   Style="{StaticResource SubHeadline}"
+						   FontSize="12" />
+					<Button Text="Select New Deck File"
+							Style="{StaticResource SecondaryButtonStyle}"
+							Command="{Binding PickReplaceFileCommand}"
+							HorizontalOptions="Fill" />
+					<Label Text="{Binding ReplacePreviewText}"
+						   IsVisible="{Binding HasReplacePreview}"
+						   FontFamily="InterBold"
+						   HorizontalTextAlignment="Center" />
+					<Button Text="Confirm Replace"
+							Style="{StaticResource PrimaryButtonStyle}"
+							Command="{Binding ConfirmReplaceCommand}"
+							IsVisible="{Binding HasReplacePreview}"
+							IsEnabled="{Binding IsReplacing, Converter={StaticResource InvertedBoolConverter}}"
+							HorizontalOptions="Fill" />
+					<ActivityIndicator IsRunning="{Binding IsReplacing}"
+									   IsVisible="{Binding IsReplacing}"
+									   HorizontalOptions="Center" />
+				</VerticalStackLayout>
+			</Border>
+
+			<!-- Danger Zone -->
+			<Border IsVisible="{Binding IsLoaded}"
+					Stroke="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}"
+					StrokeShape="RoundRectangle 12"
+					StrokeThickness="1"
+					Padding="16">
+				<VerticalStackLayout Spacing="8">
+					<Label Text="Danger Zone"
+						   Style="{StaticResource SectionHeader}"
+						   TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}" />
+					<Button Text="Delete Deck"
+							Command="{Binding DeleteDeckCommand}"
+							BackgroundColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}"
+							TextColor="{AppThemeBinding Light={StaticResource OnErrorLight}, Dark={StaticResource OnErrorDark}}"
+							CornerRadius="8"
+							HorizontalOptions="Fill" />
+				</VerticalStackLayout>
+			</Border>
+
+			<!-- Status message -->
+			<Label Text="{Binding StatusMessage}"
+				   IsVisible="{Binding StatusMessage, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+				   HorizontalTextAlignment="Center">
+				<Label.Triggers>
+					<DataTrigger TargetType="Label"
+								 Binding="{Binding IsError}"
+								 Value="True">
+						<Setter Property="Style" Value="{StaticResource MissingCardStyle}" />
+					</DataTrigger>
+				</Label.Triggers>
+			</Label>
+
+			<!-- Back button -->
+			<Button Text="Back"
+					Style="{StaticResource SecondaryButtonStyle}"
+					Command="{Binding GoBackCommand}"
+					HorizontalOptions="Fill" />
+
+		</VerticalStackLayout>
+	</ScrollView>
+
+</ContentPage>

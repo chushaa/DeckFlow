@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:vm="clr-namespace:DeckFlow.ViewModels"
+			 x:Class="DeckFlow.MainPage"
+			 x:DataType="vm:MainPageViewModel"
+			 Shell.NavBarIsVisible="False">
+
+	<Grid RowDefinitions="Auto,*,Auto" Padding="24">
+
+		<!-- Settings gear top-right -->
+		<HorizontalStackLayout Grid.Row="0" HorizontalOptions="End">
+			<Button Text="&#x2699;"
+					FontSize="24"
+					BackgroundColor="Transparent"
+					TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}"
+					Command="{Binding OpenSettingsCommand}"
+					SemanticProperties.Description="Settings"
+					Padding="8"
+					MinimumWidthRequest="48"
+					MinimumHeightRequest="48" />
+		</HorizontalStackLayout>
+
+		<!-- Center content -->
+		<VerticalStackLayout Grid.Row="1"
+							 VerticalOptions="Center"
+							 HorizontalOptions="Center"
+							 Spacing="16"
+							 MaximumWidthRequest="400">
+
+			<!-- Logo: replace deckflow_logo.png with extracted infinity logo -->
+			<Image Source="deckflow_logo.png"
+				   HeightRequest="80"
+				   WidthRequest="80"
+				   HorizontalOptions="Center"
+				   SemanticProperties.Description="DeckFlow logo" />
+
+			<Label Style="{StaticResource Headline}"
+				   FontSize="36"
+				   HorizontalTextAlignment="Center"
+				   SemanticProperties.HeadingLevel="Level1">
+				<Label.FormattedText>
+					<FormattedString>
+						<Span Text="Deck"
+							  TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}" />
+						<Span Text="Flow"
+							  TextColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}" />
+					</FormattedString>
+				</Label.FormattedText>
+			</Label>
+
+			<Label Text="Organize your MTG collection"
+				   Style="{StaticResource SubHeadline}"
+				   HorizontalTextAlignment="Center"
+				   SemanticProperties.HeadingLevel="Level2" />
+
+			<!-- Deck count badge -->
+			<Border Style="{StaticResource BadgeStyle}"
+					HorizontalOptions="Center"
+					Margin="0,8,0,0">
+				<Label Text="{Binding DeckCountText}"
+					   Style="{StaticResource BadgeTextStyle}" />
+			</Border>
+
+			<!-- Primary action -->
+			<Button Text="Begin DeckFlow"
+					Style="{StaticResource PrimaryButtonStyle}"
+					Command="{Binding BeginDeckFlowCommand}"
+					IsEnabled="{Binding CanBeginDeckFlow}"
+					HorizontalOptions="Fill"
+					Margin="0,16,0,0"
+					SemanticProperties.Hint="Start deck selection for your play session" />
+
+			<!-- Import actions -->
+			<Button Text="Collection"
+					Style="{StaticResource SecondaryButtonStyle}"
+					Command="{Binding CollectionCommand}"
+					HorizontalOptions="Fill"
+					SemanticProperties.Hint="Browse and manage your card collection binders" />
+
+			<Button Text="Decks"
+					Style="{StaticResource SecondaryButtonStyle}"
+					Command="{Binding DecksCommand}"
+					HorizontalOptions="Fill"
+					SemanticProperties.Hint="View and manage your deck collection" />
+
+		</VerticalStackLayout>
+
+		<!-- Step progress hint at bottom -->
+		<Label Grid.Row="2"
+			   Text="3 steps to organized gameplay"
+			   Style="{StaticResource SubHeadline}"
+			   FontSize="12"
+			   HorizontalTextAlignment="Center"
+			   Opacity="0.6"
+			   Margin="0,0,0,16" />
+
+	</Grid>
+
+</ContentPage>

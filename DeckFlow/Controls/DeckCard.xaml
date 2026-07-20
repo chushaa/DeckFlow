@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:vm="clr-namespace:DeckFlow.ViewModels"
+			 x:Class="DeckFlow.Controls.DeckCard"
+			 x:DataType="vm:DeckItemViewModel">
+
+	<Border Style="{StaticResource CardStyle}"
+			Padding="12"
+			SemanticProperties.Description="{Binding Name, StringFormat='Deck: {0}'}"
+			MinimumHeightRequest="48">
+		<Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+
+			<!-- Order badge (visible when selected) -->
+			<Border Grid.Column="0"
+					IsVisible="{Binding OrderBadge, Converter={StaticResource IsNotNullConverter}}"
+					BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}"
+					StrokeThickness="0"
+					WidthRequest="32"
+					HeightRequest="32"
+					VerticalOptions="Center">
+				<Border.StrokeShape>
+					<RoundRectangle CornerRadius="16" />
+				</Border.StrokeShape>
+				<Label Text="{Binding OrderBadge}"
+					   TextColor="{AppThemeBinding Light={StaticResource OnPrimaryLight}, Dark={StaticResource OnPrimaryDark}}"
+					   FontFamily="InterBold"
+					   FontSize="14"
+					   HorizontalTextAlignment="Center"
+					   VerticalTextAlignment="Center" />
+			</Border>
+
+			<!-- Deck info -->
+			<VerticalStackLayout Grid.Column="1"
+								 VerticalOptions="Center"
+								 Spacing="2">
+				<Label Text="{Binding Name}"
+					   FontFamily="InterBold"
+					   FontSize="16"
+					   LineBreakMode="TailTruncation" />
+				<HorizontalStackLayout Spacing="8">
+					<Label Text="{Binding BoundLocationName}"
+						   Style="{StaticResource SubHeadline}"
+						   FontSize="12"
+						   LineBreakMode="TailTruncation" />
+					<Label Text="{Binding CardCount, StringFormat='{0} cards'}"
+						   Style="{StaticResource SubHeadline}"
+						   FontSize="12" />
+				</HorizontalStackLayout>
+			</VerticalStackLayout>
+
+			<!-- Selection checkmark -->
+			<Label Grid.Column="2"
+				   Text="&#x2713;"
+				   FontSize="20"
+				   TextColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}"
+				   IsVisible="{Binding IsSelected}"
+				   VerticalOptions="Center"
+				   HorizontalOptions="Center"
+				   SemanticProperties.Description="Selected" />
+
+		</Grid>
+	</Border>
+
+</ContentView>

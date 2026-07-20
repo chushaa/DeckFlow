@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 x:Class="DeckFlow.Views.SettingsPage"
+			 Title="Settings">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Home"
+					 IconImageSource="home_icon"
+					 Clicked="OnHomeClicked" />
+	</ContentPage.ToolbarItems>
+
+	<ScrollView>
+		<VerticalStackLayout Padding="24" Spacing="24">
+
+			<!-- Theme section -->
+			<Label Text="Appearance" Style="{StaticResource SectionHeader}" />
+
+			<VerticalStackLayout Spacing="4">
+				<Label Text="Theme" FontFamily="InterBold" />
+				<Label Text="Choose how DeckFlow looks"
+					   TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}"
+					   FontSize="12" />
+			</VerticalStackLayout>
+
+			<VerticalStackLayout RadioButtonGroup.GroupName="ThemeGroup"
+								RadioButtonGroup.SelectedValue="{Binding SelectedTheme}"
+								Spacing="0">
+				<RadioButton Content="System default" Value="System"
+							 CheckedChanged="OnThemeCheckedChanged"
+							 SemanticProperties.Description="Use system default theme" />
+				<RadioButton Content="Light" Value="Light"
+							 CheckedChanged="OnThemeCheckedChanged"
+							 SemanticProperties.Description="Use light theme" />
+				<RadioButton Content="Dark" Value="Dark"
+							 CheckedChanged="OnThemeCheckedChanged"
+							 SemanticProperties.Description="Use dark theme" />
+			</VerticalStackLayout>
+
+			<!-- Data section -->
+			<Label Text="Data" Style="{StaticResource SectionHeader}" />
+
+			<VerticalStackLayout Spacing="4">
+				<Label Text="Delete Collection" FontFamily="InterBold" />
+				<Label Text="Removes all owned card copies. Cards, printings, locations, and decks are kept."
+					   TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}"
+					   FontSize="12" />
+			</VerticalStackLayout>
+
+			<Button Text="Delete Collection"
+					Clicked="OnDeleteCollectionClicked"
+					BackgroundColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}"
+					TextColor="{AppThemeBinding Light={StaticResource OnErrorLight}, Dark={StaticResource OnErrorDark}}"
+					CornerRadius="8"
+					HorizontalOptions="Fill" />
+
+		</VerticalStackLayout>
+	</ScrollView>
+
+</ContentPage>

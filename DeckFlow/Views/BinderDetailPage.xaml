@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:vm="clr-namespace:DeckFlow.ViewModels"
+			 x:Class="DeckFlow.Views.BinderDetailPage"
+			 x:DataType="vm:BinderDetailViewModel"
+			 Title="Binder">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="&#x2699;"
+					 Command="{Binding OpenSettingsCommand}"
+					 SemanticProperties.Description="Binder settings" />
+		<ToolbarItem Text="Home"
+					 IconImageSource="home_icon"
+					 Clicked="OnHomeClicked" />
+	</ContentPage.ToolbarItems>
+
+	<Grid RowDefinitions="Auto,*" Padding="24" RowSpacing="16">
+
+		<!-- Header -->
+		<VerticalStackLayout Grid.Row="0" Spacing="4">
+			<Label Text="{Binding BinderName}"
+				   Style="{StaticResource Headline}"
+				   SemanticProperties.HeadingLevel="Level1" />
+			<Label Text="{Binding AssignedDecksText}"
+				   IsVisible="{Binding HasAssignedDecks}"
+				   FontFamily="InterItalic"
+				   FontSize="13"
+				   TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}" />
+			<Border Style="{StaticResource BadgeStyle}"
+					HorizontalOptions="Start"
+					Margin="0,4,0,0">
+				<Label Text="{Binding CardCountText}"
+					   Style="{StaticResource BadgeTextStyle}" />
+			</Border>
+		</VerticalStackLayout>
+
+		<!-- Loading label -->
+		<Label Grid.Row="1"
+			   Text="Loading binder..."
+			   IsVisible="{Binding IsLoading}"
+			   Style="{StaticResource SubHeadline}"
+			   HorizontalTextAlignment="Center"
+			   VerticalTextAlignment="Center"
+			   HorizontalOptions="Center"
+			   VerticalOptions="Center" />
+
+		<!-- Card list (hidden until loaded) -->
+		<CollectionView Grid.Row="1"
+						ItemsSource="{Binding Cards}"
+						IsVisible="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}">
+			<CollectionView.EmptyView>
+				<Label Text="No cards in this binder"
+					   Style="{StaticResource SubHeadline}"
+					   HorizontalTextAlignment="Center"
+					   VerticalTextAlignment="Center"
+					   HorizontalOptions="Center"
+					   VerticalOptions="Center" />
+			</CollectionView.EmptyView>
+
+			<CollectionView.ItemTemplate>
+				<DataTemplate x:DataType="vm:BinderCardItemViewModel">
+					<Grid ColumnDefinitions="Auto,*,Auto" Padding="8,6" ColumnSpacing="12">
+						<!-- Quantity badge -->
+						<Border Style="{StaticResource BadgeStyle}"
+								VerticalOptions="Center"
+								MinimumWidthRequest="32">
+							<Label Text="{Binding Quantity}"
+								   Style="{StaticResource BadgeTextStyle}"
+								   HorizontalTextAlignment="Center" />
+						</Border>
+
+						<!-- Card name + set info -->
+						<VerticalStackLayout Grid.Column="1"
+											 VerticalOptions="Center"
+											 Spacing="2">
+							<Label Text="{Binding CardName}"
+								   FontFamily="InterBold"
+								   FontSize="14"
+								   LineBreakMode="TailTruncation"
+								   MaxLines="1" />
+							<Label Text="{Binding SetInfo}"
+								   Style="{StaticResource SubHeadline}"
+								   FontSize="11"
+								   Opacity="0.6" />
+						</VerticalStackLayout>
+
+						<!-- Foil indicator -->
+						<Label Grid.Column="2"
+							   Text="&#x2728;"
+							   FontSize="16"
+							   VerticalOptions="Center"
+							   IsVisible="{Binding IsFoil}"
+							   SemanticProperties.Description="Foil card" />
+					</Grid>
+				</DataTemplate>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
+
+	</Grid>
+
+</ContentPage>

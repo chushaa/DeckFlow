@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:vm="clr-namespace:DeckFlow.ViewModels"
+			 x:Class="DeckFlow.Views.CollectionsPage"
+			 x:DataType="vm:CollectionsViewModel"
+			 Title="Collection">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Import"
+					 Command="{Binding ImportCollectionCommand}"
+					 SemanticProperties.Description="Import collection" />
+		<ToolbarItem Text="Home"
+					 IconImageSource="home_icon"
+					 Clicked="OnHomeClicked" />
+	</ContentPage.ToolbarItems>
+
+	<Grid RowDefinitions="Auto,*" Padding="24" RowSpacing="16">
+
+		<!-- Header -->
+		<Label Grid.Row="0"
+			   Text="{Binding BinderCountText}"
+			   Style="{StaticResource Headline}"
+			   VerticalOptions="Center"
+			   SemanticProperties.HeadingLevel="Level1" />
+
+		<!-- Binder grid -->
+		<CollectionView Grid.Row="1"
+						ItemsSource="{Binding Binders}">
+			<CollectionView.ItemsLayout>
+				<GridItemsLayout Orientation="Vertical"
+								 Span="2"
+								 HorizontalItemSpacing="12"
+								 VerticalItemSpacing="12" />
+			</CollectionView.ItemsLayout>
+
+			<CollectionView.EmptyView>
+				<VerticalStackLayout VerticalOptions="Center"
+									 HorizontalOptions="Center"
+									 Spacing="8">
+					<Label Text="No binders yet"
+						   Style="{StaticResource SubHeadline}"
+						   HorizontalTextAlignment="Center" />
+					<Label Text="Import a collection to get started"
+						   Style="{StaticResource SubHeadline}"
+						   FontSize="12"
+						   HorizontalTextAlignment="Center"
+						   Opacity="0.6" />
+				</VerticalStackLayout>
+			</CollectionView.EmptyView>
+
+			<CollectionView.ItemTemplate>
+				<DataTemplate x:DataType="vm:BinderTileViewModel">
+					<Border Style="{StaticResource CardStyle}" Padding="12">
+						<Border.GestureRecognizers>
+							<TapGestureRecognizer
+								Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CollectionsViewModel}}, Path=OpenBinderCommand}"
+								CommandParameter="{Binding}" />
+						</Border.GestureRecognizers>
+						<VerticalStackLayout Spacing="8">
+							<!-- Color bar -->
+							<BoxView HeightRequest="100"
+									 Color="{Binding Color, Converter={StaticResource StringToColorConverter}}"
+									 CornerRadius="8" />
+
+							<!-- Name row with gear -->
+							<Grid ColumnDefinitions="*,Auto">
+								<Label Text="{Binding Name}"
+									   FontFamily="InterBold"
+									   FontSize="14"
+									   VerticalOptions="Center"
+									   LineBreakMode="TailTruncation"
+									   MaxLines="1" />
+								<Label Grid.Column="1"
+									   Text="&#x2699;"
+									   FontSize="18"
+									   VerticalOptions="Center"
+									   TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}"
+									   SemanticProperties.Description="Binder settings">
+									<Label.GestureRecognizers>
+										<TapGestureRecognizer
+											Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CollectionsViewModel}}, Path=OpenBinderSettingsCommand}"
+											CommandParameter="{Binding}" />
+									</Label.GestureRecognizers>
+								</Label>
+							</Grid>
+
+							<Label Text="{Binding CardCountText}"
+								   Style="{StaticResource SubHeadline}"
+								   FontSize="12"
+								   HorizontalTextAlignment="Center" />
+
+							<!-- Assigned decks -->
+							<Label Text="{Binding AssignedDeckNames}"
+								   IsVisible="{Binding HasAssignedDecks}"
+								   Style="{StaticResource SubHeadline}"
+								   FontSize="11"
+								   FontFamily="InterItalic"
+								   HorizontalTextAlignment="Center"
+								   Opacity="0.6"
+								   LineBreakMode="TailTruncation"
+								   MaxLines="1" />
+						</VerticalStackLayout>
+					</Border>
+				</DataTemplate>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
+
+		<!-- Loading indicator -->
+		<ActivityIndicator Grid.Row="1"
+						   IsRunning="{Binding IsLoading}"
+						   IsVisible="{Binding IsLoading}"
+						   HorizontalOptions="Center"
+						   VerticalOptions="Center" />
+
+	</Grid>
+
+</ContentPage>
